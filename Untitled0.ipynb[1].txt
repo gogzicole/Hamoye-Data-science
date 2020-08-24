@@ -1,0 +1,1609 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "colab": {
+      "name": "Untitled0.ipynb",
+      "provenance": [],
+      "collapsed_sections": []
+    },
+    "kernelspec": {
+      "name": "python3",
+      "display_name": "Python 3"
+    }
+  },
+  "cells": [
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "U9-lVNhOw5rU",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "#importing the necessary libraries\n",
+        "import pandas as pd\n",
+        "import numpy as np\n",
+        "import matplotlib.pyplot as plt\n",
+        "import seaborn as sns\n",
+        "%matplotlib inline"
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "5M7ix-d7xOkd",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "url = 'https://raw.githubusercontent.com/moreira-presh/HAMOYE-INTERNSHIP-2020/master/Data_for_UCI_named.csv'"
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "UfKawPoCxHJj",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "udf = pd.read_csv(url)"
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "cyBfTQMm1-Ss",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "from google.colab import drive\n",
+        "drive.mount('/content/drive')"
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "-BJ7PmVSLkGK",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 290
+        },
+        "outputId": "c69c61f6-878f-4700-ace0-90b26429fc76"
+      },
+      "source": [
+        "df.isna().sum()"
+      ],
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "tau1     0\n",
+              "tau2     0\n",
+              "tau3     0\n",
+              "tau4     0\n",
+              "p1       0\n",
+              "p2       0\n",
+              "p3       0\n",
+              "p4       0\n",
+              "g1       0\n",
+              "g2       0\n",
+              "g3       0\n",
+              "g4       0\n",
+              "stab     0\n",
+              "stabf    0\n",
+              "dtype: int64"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 4
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "QauZuhOsL1xC",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "df = df.drop(columns = 'stab')"
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "23ovyTKbL4lZ",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "X = df.drop(['stabf'],axis = 1)\n",
+        "y = df['stabf']"
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "LgQps3jqL65g",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 72
+        },
+        "outputId": "60d44ea2-f0cb-45d0-b105-a11b6dfd85df"
+      },
+      "source": [
+        "df.stabf.value_counts() # before the split was carried out"
+      ],
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "unstable    6380\n",
+              "stable      3620\n",
+              "Name: stabf, dtype: int64"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 7
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "y2cOlS7hMAO8",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "from sklearn.model_selection import train_test_split\n",
+        "X_train, X_test, y_train, y_test = train_test_split( X, y, test_size=0.2, random_state=1)"
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "syOiiiH6Mt6Q",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 90
+        },
+        "outputId": "f22cf1f1-a5e9-413c-8463-53eb5bd5be5f"
+      },
+      "source": [
+        "print(X_train.shape)\n",
+        "print(X_test.shape)\n",
+        "print(y_train.shape)\n",
+        "print(y_test.shape)"
+      ],
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "text": [
+            "(8000, 12)\n",
+            "(2000, 12)\n",
+            "(8000,)\n",
+            "(2000,)\n"
+          ],
+          "name": "stdout"
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "IpDh1CR0MDzP",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 72
+        },
+        "outputId": "55255f90-6b49-4868-a308-dfb1514f92e8"
+      },
+      "source": [
+        "y_train.value_counts() # after split "
+      ],
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "unstable    5092\n",
+              "stable      2908\n",
+              "Name: stabf, dtype: int64"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 10
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "fbC56yYSM0Kd",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 72
+        },
+        "outputId": "686862ce-8e56-431e-92f5-c9602b69ffa8"
+      },
+      "source": [
+        "y_test.value_counts() # after splitX"
+      ],
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "unstable    1288\n",
+              "stable       712\n",
+              "Name: stabf, dtype: int64"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 11
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "UPDIuOX-M12K",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 143
+        },
+        "outputId": "b29d7fcb-0b8e-4465-8aa4-145124a39dab"
+      },
+      "source": [
+        "X_train.head(3) # checking the Xtrain dataframe before transformation is done on it"
+      ],
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/html": [
+              "<div>\n",
+              "<style scoped>\n",
+              "    .dataframe tbody tr th:only-of-type {\n",
+              "        vertical-align: middle;\n",
+              "    }\n",
+              "\n",
+              "    .dataframe tbody tr th {\n",
+              "        vertical-align: top;\n",
+              "    }\n",
+              "\n",
+              "    .dataframe thead th {\n",
+              "        text-align: right;\n",
+              "    }\n",
+              "</style>\n",
+              "<table border=\"1\" class=\"dataframe\">\n",
+              "  <thead>\n",
+              "    <tr style=\"text-align: right;\">\n",
+              "      <th></th>\n",
+              "      <th>tau1</th>\n",
+              "      <th>tau2</th>\n",
+              "      <th>tau3</th>\n",
+              "      <th>tau4</th>\n",
+              "      <th>p1</th>\n",
+              "      <th>p2</th>\n",
+              "      <th>p3</th>\n",
+              "      <th>p4</th>\n",
+              "      <th>g1</th>\n",
+              "      <th>g2</th>\n",
+              "      <th>g3</th>\n",
+              "      <th>g4</th>\n",
+              "    </tr>\n",
+              "  </thead>\n",
+              "  <tbody>\n",
+              "    <tr>\n",
+              "      <th>2694</th>\n",
+              "      <td>6.255995</td>\n",
+              "      <td>2.542401</td>\n",
+              "      <td>7.024714</td>\n",
+              "      <td>9.476518</td>\n",
+              "      <td>3.529888</td>\n",
+              "      <td>-1.224881</td>\n",
+              "      <td>-0.688228</td>\n",
+              "      <td>-1.616780</td>\n",
+              "      <td>0.568221</td>\n",
+              "      <td>0.618403</td>\n",
+              "      <td>0.685739</td>\n",
+              "      <td>0.660088</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>5140</th>\n",
+              "      <td>5.070581</td>\n",
+              "      <td>5.490253</td>\n",
+              "      <td>8.075688</td>\n",
+              "      <td>0.761075</td>\n",
+              "      <td>4.220888</td>\n",
+              "      <td>-1.280596</td>\n",
+              "      <td>-1.902185</td>\n",
+              "      <td>-1.038107</td>\n",
+              "      <td>0.443515</td>\n",
+              "      <td>0.097244</td>\n",
+              "      <td>0.916955</td>\n",
+              "      <td>0.129254</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>2568</th>\n",
+              "      <td>1.220072</td>\n",
+              "      <td>8.804028</td>\n",
+              "      <td>3.874283</td>\n",
+              "      <td>8.433949</td>\n",
+              "      <td>3.614027</td>\n",
+              "      <td>-1.039236</td>\n",
+              "      <td>-0.953566</td>\n",
+              "      <td>-1.621224</td>\n",
+              "      <td>0.908353</td>\n",
+              "      <td>0.923594</td>\n",
+              "      <td>0.238881</td>\n",
+              "      <td>0.660156</td>\n",
+              "    </tr>\n",
+              "  </tbody>\n",
+              "</table>\n",
+              "</div>"
+            ],
+            "text/plain": [
+              "          tau1      tau2      tau3  ...        g2        g3        g4\n",
+              "2694  6.255995  2.542401  7.024714  ...  0.618403  0.685739  0.660088\n",
+              "5140  5.070581  5.490253  8.075688  ...  0.097244  0.916955  0.129254\n",
+              "2568  1.220072  8.804028  3.874283  ...  0.923594  0.238881  0.660156\n",
+              "\n",
+              "[3 rows x 12 columns]"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 12
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "_-la5hs5M1-W",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 143
+        },
+        "outputId": "44b9c140-e964-4b7f-b631-44aff8f02719"
+      },
+      "source": [
+        "X_test.head(3) # checking the Xtest dataframe before transformation is done on it"
+      ],
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/html": [
+              "<div>\n",
+              "<style scoped>\n",
+              "    .dataframe tbody tr th:only-of-type {\n",
+              "        vertical-align: middle;\n",
+              "    }\n",
+              "\n",
+              "    .dataframe tbody tr th {\n",
+              "        vertical-align: top;\n",
+              "    }\n",
+              "\n",
+              "    .dataframe thead th {\n",
+              "        text-align: right;\n",
+              "    }\n",
+              "</style>\n",
+              "<table border=\"1\" class=\"dataframe\">\n",
+              "  <thead>\n",
+              "    <tr style=\"text-align: right;\">\n",
+              "      <th></th>\n",
+              "      <th>tau1</th>\n",
+              "      <th>tau2</th>\n",
+              "      <th>tau3</th>\n",
+              "      <th>tau4</th>\n",
+              "      <th>p1</th>\n",
+              "      <th>p2</th>\n",
+              "      <th>p3</th>\n",
+              "      <th>p4</th>\n",
+              "      <th>g1</th>\n",
+              "      <th>g2</th>\n",
+              "      <th>g3</th>\n",
+              "      <th>g4</th>\n",
+              "    </tr>\n",
+              "  </thead>\n",
+              "  <tbody>\n",
+              "    <tr>\n",
+              "      <th>9953</th>\n",
+              "      <td>6.877876</td>\n",
+              "      <td>4.113820</td>\n",
+              "      <td>9.356768</td>\n",
+              "      <td>8.299753</td>\n",
+              "      <td>4.056779</td>\n",
+              "      <td>-1.897470</td>\n",
+              "      <td>-1.590581</td>\n",
+              "      <td>-0.568728</td>\n",
+              "      <td>0.276567</td>\n",
+              "      <td>0.845536</td>\n",
+              "      <td>0.112440</td>\n",
+              "      <td>0.822562</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>3850</th>\n",
+              "      <td>5.802841</td>\n",
+              "      <td>6.271371</td>\n",
+              "      <td>4.731540</td>\n",
+              "      <td>3.819867</td>\n",
+              "      <td>3.579569</td>\n",
+              "      <td>-1.709480</td>\n",
+              "      <td>-1.067511</td>\n",
+              "      <td>-0.802579</td>\n",
+              "      <td>0.077527</td>\n",
+              "      <td>0.416478</td>\n",
+              "      <td>0.912846</td>\n",
+              "      <td>0.861306</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>4962</th>\n",
+              "      <td>2.286998</td>\n",
+              "      <td>4.385142</td>\n",
+              "      <td>2.830232</td>\n",
+              "      <td>5.293880</td>\n",
+              "      <td>3.035814</td>\n",
+              "      <td>-1.202764</td>\n",
+              "      <td>-0.902011</td>\n",
+              "      <td>-0.931039</td>\n",
+              "      <td>0.924216</td>\n",
+              "      <td>0.130186</td>\n",
+              "      <td>0.703887</td>\n",
+              "      <td>0.063811</td>\n",
+              "    </tr>\n",
+              "  </tbody>\n",
+              "</table>\n",
+              "</div>"
+            ],
+            "text/plain": [
+              "          tau1      tau2      tau3  ...        g2        g3        g4\n",
+              "9953  6.877876  4.113820  9.356768  ...  0.845536  0.112440  0.822562\n",
+              "3850  5.802841  6.271371  4.731540  ...  0.416478  0.912846  0.861306\n",
+              "4962  2.286998  4.385142  2.830232  ...  0.130186  0.703887  0.063811\n",
+              "\n",
+              "[3 rows x 12 columns]"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 13
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "b2sgLv-fMXxT",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "from sklearn.preprocessing import StandardScaler"
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "BVVhIP1eNLU_",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "scaler = StandardScaler()"
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "EEdS1UPXNN92",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "transformed_X_train = scaler.fit_transform(X_train)\n",
+        "transformed_X_train = pd.DataFrame(transformed_X_train, columns = X_train.columns)"
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "KB06wkUXNQ8s",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 206
+        },
+        "outputId": "08653308-9631-4968-b792-9af0a9982145"
+      },
+      "source": [
+        "transformed_X_train.head() # after applying transformation on the data"
+      ],
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/html": [
+              "<div>\n",
+              "<style scoped>\n",
+              "    .dataframe tbody tr th:only-of-type {\n",
+              "        vertical-align: middle;\n",
+              "    }\n",
+              "\n",
+              "    .dataframe tbody tr th {\n",
+              "        vertical-align: top;\n",
+              "    }\n",
+              "\n",
+              "    .dataframe thead th {\n",
+              "        text-align: right;\n",
+              "    }\n",
+              "</style>\n",
+              "<table border=\"1\" class=\"dataframe\">\n",
+              "  <thead>\n",
+              "    <tr style=\"text-align: right;\">\n",
+              "      <th></th>\n",
+              "      <th>tau1</th>\n",
+              "      <th>tau2</th>\n",
+              "      <th>tau3</th>\n",
+              "      <th>tau4</th>\n",
+              "      <th>p1</th>\n",
+              "      <th>p2</th>\n",
+              "      <th>p3</th>\n",
+              "      <th>p4</th>\n",
+              "      <th>g1</th>\n",
+              "      <th>g2</th>\n",
+              "      <th>g3</th>\n",
+              "      <th>g4</th>\n",
+              "    </tr>\n",
+              "  </thead>\n",
+              "  <tbody>\n",
+              "    <tr>\n",
+              "      <th>0</th>\n",
+              "      <td>0.367327</td>\n",
+              "      <td>-0.986042</td>\n",
+              "      <td>0.650447</td>\n",
+              "      <td>1.547527</td>\n",
+              "      <td>-0.291490</td>\n",
+              "      <td>0.061535</td>\n",
+              "      <td>1.293862</td>\n",
+              "      <td>-0.845074</td>\n",
+              "      <td>0.160918</td>\n",
+              "      <td>0.339859</td>\n",
+              "      <td>0.585568</td>\n",
+              "      <td>0.492239</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>1</th>\n",
+              "      <td>-0.064659</td>\n",
+              "      <td>0.089437</td>\n",
+              "      <td>1.035079</td>\n",
+              "      <td>-1.641494</td>\n",
+              "      <td>0.619865</td>\n",
+              "      <td>-0.067235</td>\n",
+              "      <td>-1.502925</td>\n",
+              "      <td>0.486613</td>\n",
+              "      <td>-0.293143</td>\n",
+              "      <td>-1.558488</td>\n",
+              "      <td>1.429649</td>\n",
+              "      <td>-1.443521</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>2</th>\n",
+              "      <td>-1.467850</td>\n",
+              "      <td>1.298418</td>\n",
+              "      <td>-0.502536</td>\n",
+              "      <td>1.166046</td>\n",
+              "      <td>-0.180521</td>\n",
+              "      <td>0.490603</td>\n",
+              "      <td>0.682560</td>\n",
+              "      <td>-0.855302</td>\n",
+              "      <td>1.399350</td>\n",
+              "      <td>1.451534</td>\n",
+              "      <td>-1.045743</td>\n",
+              "      <td>0.492489</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>3</th>\n",
+              "      <td>0.820081</td>\n",
+              "      <td>0.529920</td>\n",
+              "      <td>1.299657</td>\n",
+              "      <td>-1.141975</td>\n",
+              "      <td>-0.812854</td>\n",
+              "      <td>-0.763632</td>\n",
+              "      <td>1.521579</td>\n",
+              "      <td>0.658780</td>\n",
+              "      <td>-0.958319</td>\n",
+              "      <td>1.361958</td>\n",
+              "      <td>1.604140</td>\n",
+              "      <td>0.275303</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>4</th>\n",
+              "      <td>0.665424</td>\n",
+              "      <td>-1.425627</td>\n",
+              "      <td>0.312300</td>\n",
+              "      <td>0.919137</td>\n",
+              "      <td>-1.614296</td>\n",
+              "      <td>0.760315</td>\n",
+              "      <td>1.422019</td>\n",
+              "      <td>0.639243</td>\n",
+              "      <td>1.676895</td>\n",
+              "      <td>0.695660</td>\n",
+              "      <td>1.137504</td>\n",
+              "      <td>-1.312575</td>\n",
+              "    </tr>\n",
+              "  </tbody>\n",
+              "</table>\n",
+              "</div>"
+            ],
+            "text/plain": [
+              "       tau1      tau2      tau3  ...        g2        g3        g4\n",
+              "0  0.367327 -0.986042  0.650447  ...  0.339859  0.585568  0.492239\n",
+              "1 -0.064659  0.089437  1.035079  ... -1.558488  1.429649 -1.443521\n",
+              "2 -1.467850  1.298418 -0.502536  ...  1.451534 -1.045743  0.492489\n",
+              "3  0.820081  0.529920  1.299657  ...  1.361958  1.604140  0.275303\n",
+              "4  0.665424 -1.425627  0.312300  ...  0.695660  1.137504 -1.312575\n",
+              "\n",
+              "[5 rows x 12 columns]"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 17
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "e11GFwuQNW6O",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 206
+        },
+        "outputId": "ca4be021-ac42-4d2e-9a99-dda47d06af87"
+      },
+      "source": [
+        "transformed_X_test = scaler.transform(X_test)\n",
+        "transformed_X_test = pd.DataFrame(transformed_X_test, columns = X_test.columns)\n",
+        "transformed_X_test.head() # after applying transformation on the data"
+      ],
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/html": [
+              "<div>\n",
+              "<style scoped>\n",
+              "    .dataframe tbody tr th:only-of-type {\n",
+              "        vertical-align: middle;\n",
+              "    }\n",
+              "\n",
+              "    .dataframe tbody tr th {\n",
+              "        vertical-align: top;\n",
+              "    }\n",
+              "\n",
+              "    .dataframe thead th {\n",
+              "        text-align: right;\n",
+              "    }\n",
+              "</style>\n",
+              "<table border=\"1\" class=\"dataframe\">\n",
+              "  <thead>\n",
+              "    <tr style=\"text-align: right;\">\n",
+              "      <th></th>\n",
+              "      <th>tau1</th>\n",
+              "      <th>tau2</th>\n",
+              "      <th>tau3</th>\n",
+              "      <th>tau4</th>\n",
+              "      <th>p1</th>\n",
+              "      <th>p2</th>\n",
+              "      <th>p3</th>\n",
+              "      <th>p4</th>\n",
+              "      <th>g1</th>\n",
+              "      <th>g2</th>\n",
+              "      <th>g3</th>\n",
+              "      <th>g4</th>\n",
+              "    </tr>\n",
+              "  </thead>\n",
+              "  <tbody>\n",
+              "    <tr>\n",
+              "      <th>0</th>\n",
+              "      <td>0.593951</td>\n",
+              "      <td>-0.412733</td>\n",
+              "      <td>1.503924</td>\n",
+              "      <td>1.116943</td>\n",
+              "      <td>0.403423</td>\n",
+              "      <td>-1.492971</td>\n",
+              "      <td>-0.785033</td>\n",
+              "      <td>1.566781</td>\n",
+              "      <td>-0.901007</td>\n",
+              "      <td>1.167203</td>\n",
+              "      <td>-1.507330</td>\n",
+              "      <td>1.084726</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>1</th>\n",
+              "      <td>0.202190</td>\n",
+              "      <td>0.374416</td>\n",
+              "      <td>-0.188800</td>\n",
+              "      <td>-0.522268</td>\n",
+              "      <td>-0.225967</td>\n",
+              "      <td>-1.058483</td>\n",
+              "      <td>0.420047</td>\n",
+              "      <td>1.028627</td>\n",
+              "      <td>-1.625721</td>\n",
+              "      <td>-0.395660</td>\n",
+              "      <td>1.414651</td>\n",
+              "      <td>1.226011</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>2</th>\n",
+              "      <td>-1.079044</td>\n",
+              "      <td>-0.313745</td>\n",
+              "      <td>-0.884634</td>\n",
+              "      <td>0.017080</td>\n",
+              "      <td>-0.943122</td>\n",
+              "      <td>0.112653</td>\n",
+              "      <td>0.801335</td>\n",
+              "      <td>0.733004</td>\n",
+              "      <td>1.457108</td>\n",
+              "      <td>-1.438495</td>\n",
+              "      <td>0.651821</td>\n",
+              "      <td>-1.682168</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>3</th>\n",
+              "      <td>-0.083120</td>\n",
+              "      <td>-1.107327</td>\n",
+              "      <td>0.372805</td>\n",
+              "      <td>-1.708152</td>\n",
+              "      <td>0.753990</td>\n",
+              "      <td>-1.637972</td>\n",
+              "      <td>0.403805</td>\n",
+              "      <td>-0.088036</td>\n",
+              "      <td>0.083322</td>\n",
+              "      <td>-1.672322</td>\n",
+              "      <td>-0.357714</td>\n",
+              "      <td>1.055865</td>\n",
+              "    </tr>\n",
+              "    <tr>\n",
+              "      <th>4</th>\n",
+              "      <td>0.873921</td>\n",
+              "      <td>1.438466</td>\n",
+              "      <td>0.086662</td>\n",
+              "      <td>1.715037</td>\n",
+              "      <td>-0.153880</td>\n",
+              "      <td>-0.007015</td>\n",
+              "      <td>-0.197053</td>\n",
+              "      <td>0.472315</td>\n",
+              "      <td>0.136549</td>\n",
+              "      <td>-1.469731</td>\n",
+              "      <td>0.956396</td>\n",
+              "      <td>-0.819727</td>\n",
+              "    </tr>\n",
+              "  </tbody>\n",
+              "</table>\n",
+              "</div>"
+            ],
+            "text/plain": [
+              "       tau1      tau2      tau3  ...        g2        g3        g4\n",
+              "0  0.593951 -0.412733  1.503924  ...  1.167203 -1.507330  1.084726\n",
+              "1  0.202190  0.374416 -0.188800  ... -0.395660  1.414651  1.226011\n",
+              "2 -1.079044 -0.313745 -0.884634  ... -1.438495  0.651821 -1.682168\n",
+              "3 -0.083120 -1.107327  0.372805  ... -1.672322 -0.357714  1.055865\n",
+              "4  0.873921  1.438466  0.086662  ... -1.469731  0.956396 -0.819727\n",
+              "\n",
+              "[5 rows x 12 columns]"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 18
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "D-xtvFDdN5zK",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 162
+        },
+        "outputId": "043ae61f-9b34-461f-9751-e6b4b656bb11"
+      },
+      "source": [
+        "from sklearn.ensemble import RandomForestClassifier\n",
+        "Random_C = RandomForestClassifier(random_state=1)\n",
+        "Random_C.fit(transformed_X_train,y_train)\n"
+      ],
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "RandomForestClassifier(bootstrap=True, ccp_alpha=0.0, class_weight=None,\n",
+              "                       criterion='gini', max_depth=None, max_features='auto',\n",
+              "                       max_leaf_nodes=None, max_samples=None,\n",
+              "                       min_impurity_decrease=0.0, min_impurity_split=None,\n",
+              "                       min_samples_leaf=1, min_samples_split=2,\n",
+              "                       min_weight_fraction_leaf=0.0, n_estimators=100,\n",
+              "                       n_jobs=None, oob_score=False, random_state=1, verbose=0,\n",
+              "                       warm_start=False)"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 36
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "6-u1XcEnOHkl",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "predict = Random_C.predict(transformed_X_test)"
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "sAsp3WfJOYEU",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 90
+        },
+        "outputId": "b37599f1-6e96-456d-e57c-7b9cfbab7fbb"
+      },
+      "source": [
+        "from sklearn.metrics import recall_score, accuracy_score, precision_score, f1_score, confusion_matrix\n",
+        "\n",
+        "print(\"Accuracy score {}\".format(round(accuracy_score(y_test, predict), 3)))\n",
+        "print(\"Precision score for label stable %.3f\" % (precision_score(y_test, predict, pos_label='stable')))\n",
+        "print(\"Recall score for label stable {}\".format(round(recall_score(y_test, predict, pos_label='stable'), 3)))\n",
+        "print(\"F1 score %.3f\" % (f1_score(y_test, predict, pos_label='stable')))"
+      ],
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "text": [
+            "Accuracy score 0.929\n",
+            "Precision score for label stable 0.919\n",
+            "Recall score for label stable 0.878\n",
+            "F1 score 0.898\n"
+          ],
+          "name": "stdout"
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "JIwQ9k72Oonu",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "from sklearn.metrics import classification_report,confusion_matrix"
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "l5W6B98TOv-t",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 53
+        },
+        "outputId": "3d6da256-15d1-4fc6-a60e-0df1de792f0f"
+      },
+      "source": [
+        "confusion_matrix(y_test,predict, labels=['stable', 'unstable'])"
+      ],
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "array([[ 625,   87],\n",
+              "       [  55, 1233]])"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 23
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "vTcKYKk_OzGz",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 181
+        },
+        "outputId": "256e7e29-a949-4fdb-9ed1-56a1c7b89406"
+      },
+      "source": [
+        "print(classification_report(y_test,predict))"
+      ],
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "text": [
+            "              precision    recall  f1-score   support\n",
+            "\n",
+            "      stable       0.92      0.88      0.90       712\n",
+            "    unstable       0.93      0.96      0.95      1288\n",
+            "\n",
+            "    accuracy                           0.93      2000\n",
+            "   macro avg       0.93      0.92      0.92      2000\n",
+            "weighted avg       0.93      0.93      0.93      2000\n",
+            "\n"
+          ],
+          "name": "stdout"
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "mW50RfalPiIC",
+        "colab_type": "text"
+      },
+      "source": [
+        "### ***using XGBOOST***"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "9stZ6m74PYVV",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "#xgboost\n",
+        "from xgboost import XGBClassifier\n",
+        "extreme = XGBClassifier(random_state =1)\n",
+        "extreme.fit(transformed_X_train, y_train)\n",
+        "extreme_pred = extreme.predict(transformed_X_test)"
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "R_1w5sDHTr0g",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 53
+        },
+        "outputId": "f8d94e4f-125a-401c-a33c-3ac43071c43b"
+      },
+      "source": [
+        "#confusion Matrix\n",
+        "\n",
+        "cnf_mat = confusion_matrix(y_true=y_test, y_pred=extreme_pred)\n",
+        "cnf_mat"
+      ],
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "array([[ 603,  109],\n",
+              "       [  52, 1236]])"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 39
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "sHZ0v9SoRpBy",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 181
+        },
+        "outputId": "80846281-2e2f-4bda-a36c-0f4304a2443e"
+      },
+      "source": [
+        "#classification report\n",
+        "from sklearn.metrics import classification_report\n",
+        "\n",
+        "print(classification_report(y_test, extreme_pred))"
+      ],
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "text": [
+            "              precision    recall  f1-score   support\n",
+            "\n",
+            "      stable       0.92      0.85      0.88       712\n",
+            "    unstable       0.92      0.96      0.94      1288\n",
+            "\n",
+            "    accuracy                           0.92      2000\n",
+            "   macro avg       0.92      0.90      0.91      2000\n",
+            "weighted avg       0.92      0.92      0.92      2000\n",
+            "\n"
+          ],
+          "name": "stdout"
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "2g5doRSYRx3k",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "import lightgbm as lgbm"
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "z3JFDlSXfBTF",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "lgbm = lgbm.LGBMClassifier(random_state=1)"
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "pXGlu_8JfDsE",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "lgbm.fit(transformed_X_train,y_train)\n",
+        "lgbm_predict  = lgbm.predict(transformed_X_test)"
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "UUCGhUc3fpAg",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 53
+        },
+        "outputId": "bc2997db-f3ea-458e-91bc-1f441fa9a5cc"
+      },
+      "source": [
+        "#confusion Matrix\n",
+        "\n",
+        "cnf_mat = confusion_matrix(y_true=y_test, y_pred=lgbm_predict, labels=['stable', 'unstable'])\n",
+        "cnf_mat"
+      ],
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "array([[ 635,   77],\n",
+              "       [  48, 1240]])"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 53
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "O9geAA5ifHv8",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 181
+        },
+        "outputId": "2222362d-93aa-4c0b-d9fc-32a527fd3a37"
+      },
+      "source": [
+        "print(classification_report(y_test,lgbm_predict))"
+      ],
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "text": [
+            "              precision    recall  f1-score   support\n",
+            "\n",
+            "      stable       0.93      0.89      0.91       712\n",
+            "    unstable       0.94      0.96      0.95      1288\n",
+            "\n",
+            "    accuracy                           0.94      2000\n",
+            "   macro avg       0.94      0.93      0.93      2000\n",
+            "weighted avg       0.94      0.94      0.94      2000\n",
+            "\n"
+          ],
+          "name": "stdout"
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "PH4Hhdldf9h6",
+        "colab_type": "text"
+      },
+      "source": [
+        "### ***using the Extra tree Classifier***"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "6rOqgBKRgMaH",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "from sklearn.ensemble import ExtraTreesClassifier"
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "oXWGSCL6gO_M",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "Tree_CLass = ExtraTreesClassifier (random_state = 1)"
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "zmIVlq_8gRcd",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "Tree_CLass.fit(transformed_X_train,y_train)\n",
+        "Tree_predict = Tree_CLass.predict(transformed_X_test)"
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "AYDnZTqbgYGh",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 53
+        },
+        "outputId": "9757ea97-8f3a-4025-f552-4bafe71a14ac"
+      },
+      "source": [
+        "#confusion Matrix\n",
+        "\n",
+        "cnf_mat = confusion_matrix(y_true=y_test, y_pred=Tree_predict, labels=['stable', 'unstable'])\n",
+        "cnf_mat"
+      ],
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "array([[ 606,  106],\n",
+              "       [  38, 1250]])"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 59
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "RhoYzt5xgT3a",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 181
+        },
+        "outputId": "1d4e86c1-1de7-4a64-dd83-bb7231a014d9"
+      },
+      "source": [
+        "print(classification_report(y_test,Tree_predict))"
+      ],
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "text": [
+            "              precision    recall  f1-score   support\n",
+            "\n",
+            "      stable       0.94      0.85      0.89       712\n",
+            "    unstable       0.92      0.97      0.95      1288\n",
+            "\n",
+            "    accuracy                           0.93      2000\n",
+            "   macro avg       0.93      0.91      0.92      2000\n",
+            "weighted avg       0.93      0.93      0.93      2000\n",
+            "\n"
+          ],
+          "name": "stdout"
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "mrmRolzmg3Zd",
+        "colab_type": "text"
+      },
+      "source": [
+        "### ***perfoming Tuning with Hyperparameters setting***"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "awBa_0NCg9V-",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "n_estimators = [50, 100, 300, 500, 1000]\n",
+        "\n",
+        "min_samples_split = [2, 3, 5, 7, 9]\n",
+        "\n",
+        "min_samples_leaf = [1, 2, 4, 6, 8]\n",
+        "\n",
+        "max_features = ['auto', 'sqrt', 'log2', None] \n",
+        "\n",
+        "hyperparameter_grid = {'n_estimators': n_estimators,\n",
+        "\n",
+        "                       'min_samples_leaf': min_samples_leaf,\n",
+        "\n",
+        "                       'min_samples_split': min_samples_split,\n",
+        "\n",
+        "                       'max_features': max_features}"
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "3o5-6QimhCjM",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "from sklearn.model_selection import RandomizedSearchCV"
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "QDJbPghLhFFW",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "Rand_search = RandomizedSearchCV(estimator = Tree_CLass, param_distributions= hyperparameter_grid, random_state=1)"
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "fZEkU1E8hQd3",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "search = Rand_search.fit(transformed_X_train,y_train)\n"
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "HOR509VHhWVM",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 90
+        },
+        "outputId": "cf97af75-5a4c-43cc-acb7-57aec921269b"
+      },
+      "source": [
+        "#checking for the best parameter for the model\n",
+        "search.best_params_"
+      ],
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "{'max_features': None,\n",
+              " 'min_samples_leaf': 8,\n",
+              " 'min_samples_split': 2,\n",
+              " 'n_estimators': 1000}"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 68
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "Ys4zvbO-haf3",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "#experimenting with this parameter to test the model's performance\n",
+        "best_Tree_Class = ExtraTreesClassifier(n_estimators=1000, min_samples_split=2, \n",
+        "                                 min_samples_leaf=8, max_features=None)\n",
+        "best_Tree_Class.fit(transformed_X_train, y_train)\n",
+        "best_Tree_Class = best_Tree_Class.predict(transformed_X_test)"
+      ],
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "F3v2Y-rkjjYk",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 53
+        },
+        "outputId": "20ce7dc7-1317-499b-83db-8ae5201904f3"
+      },
+      "source": [
+        "#new_predictions = log_reg.predict(normalised_test_df)\n",
+        "cnf_mat = confusion_matrix(y_true=y_test, y_pred=best_Tree_Class, labels=['stable', 'unstable'])\n",
+        "cnf_mat"
+      ],
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "array([[ 619,   93],\n",
+              "       [  53, 1235]])"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 70
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "3DNSpdgNnBkh",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 181
+        },
+        "outputId": "6ccaf2b7-53ae-48d0-bf8d-2bf00fa78141"
+      },
+      "source": [
+        "print(classification_report(y_test,best_Tree_Class, digits=4)) #  adding digits = 4 is to get my answer in 4dp."
+      ],
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "text": [
+            "              precision    recall  f1-score   support\n",
+            "\n",
+            "      stable     0.9211    0.8694    0.8945       712\n",
+            "    unstable     0.9300    0.9589    0.9442      1288\n",
+            "\n",
+            "    accuracy                         0.9270      2000\n",
+            "   macro avg     0.9256    0.9141    0.9193      2000\n",
+            "weighted avg     0.9268    0.9270    0.9265      2000\n",
+            "\n"
+          ],
+          "name": "stdout"
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "sdlmo7dLnOHD",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 35
+        },
+        "outputId": "fa3606e3-4153-4ddb-f6f1-23af46b1aa8e"
+      },
+      "source": [
+        "print(\"Accuracy score {}\".format(accuracy_score(y_test, best_Tree_Class)))"
+      ],
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "text": [
+            "Accuracy score 0.927\n"
+          ],
+          "name": "stdout"
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "sYExFu7vnYCD",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 35
+        },
+        "outputId": "4e9d044b-a53d-4c6b-969a-511d13062157"
+      },
+      "source": [
+        "round(accuracy_score(y_test,best_Tree_Class),2)"
+      ],
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "0.93"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 76
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "Ww-6ellGoMJE",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        ""
+      ],
+      "execution_count": null,
+      "outputs": []
+    }
+  ]
+}
